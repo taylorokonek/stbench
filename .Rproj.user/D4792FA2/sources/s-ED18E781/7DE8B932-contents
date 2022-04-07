@@ -1,0 +1,153 @@
+---
+title: "Homework 2: Key"
+subtitle: "BIOST 311"
+author: "Taylor Okonek and Charlie Wolock"
+date: \today
+output: 
+  pdf_document:
+    toc: false
+header-includes:
+  - \usepackage{color}
+  - \usepackage{fvextra}
+  - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(formatR)
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(results = "hide")
+```
+
+
+## Instructions
+
+This assignment should be submitted on Canvas as a .pdf by 12:30pm on Friday, April 15th. You are welcome to work together on the homework; however, final solutions should be written up individually. 
+
+Unedited software output in the body of your assignment is not acceptable. Please round numerical values to 2--3 significant digits, and include your R code (if applicable) in the same document. See the "How to Write a Proper Homework" document on Canvas for additional guidelines.  
+
+Each homework assignment is worth 20 points total. Problems are graded for correctness, according to the number of points given in the problem statement. 
+
+```{r preliminaries}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+```
+
+## 1. Simple linear regression with binary predictor
+
+For this question, you will study the association between birthweight and premature birth using the `births` dataset. 
+
+a. An infant is considered premature if born prior to 37 weeks gestation. Create a new binary variable indicating whether each birth in the dataset was premature. Provide relevant descriptive statistics for this new variable. (1 point)
+
+```{r 1a}
+births <- read_csv(url("https://raw.githubusercontent.com/cwolock/BIOST311/main/Datasets/births.csv"))
+births <- births %>% mutate(premature = ifelse(gestation < 37, 1, 0))
+births %>% select(premature) %>% table()
+```
+
+\textcolor{blue}{Out of 2,500 live births in the dataset, 278 (11.1\%) were born prior to 37 weeks gestation.}
+
+b. We are interested in studying the association between premature birth and birthweight. Write a statistical question that will allow us to examine this association through linear regression. What is our population of interest? What is our parameter? (2 points)
+
+\textcolor{blue}{Statistical question: Is there a difference in mean birthweight between premature and non-premature births? Population of interest: All babies born in King County. Parameter: Population linear regression slope (difference in mean birthweight comparing premature and non-premature births).}
+
+c. Perform a linear regression analysis to answer the statistical question from part (b). Be sure to include a statistic with appropriate uncertainty quantification, as well as a hypothesis test. Be sure to state the null and alternative hypotheses. (2 points) 
+
+```{r 1c}
+mod <- lm(bwt ~ premature, data = births)
+summary(mod)
+confint(mod)
+```
+
+\textcolor{blue}{The estimated difference in mean birthweight comparing premature and non-premature births is 823.6 grams (95\% CI 761.7 - 885.4), with premature having a lower birthweight on average. This estimated difference would not be unusual if the true difference were between 761.7 and 885.4 grams. These data provide strong evidence of a difference in mean birthweight between premature and non-premature births (p < 0.001) based on a test of the null hypothesis that the regression slope is 0, versus an alternative that the regression slope is not equal to 0.}
+
+d. Since premature birth is a binary variable, we could also approach this problem without using linear regression. Perform and interpret a t-test (assuming equal variances) comparing the average birthweight in premature vs. non-premature births. Be sure to state the null and alternative hypotheses. (2 points)
+
+```{r 1d}
+t.test(bwt ~ premature, data = births, var.equal = TRUE)
+```
+
+\textcolor{blue}{We estimate a difference in mean birthweight between premature and non-premature births of 823.6 grams, with premature births having the lower mean. The 95\% confidence interval for the difference in means is 761.7 - 885.4, indicating that the data would not be unusual if the true difference were in that interval. The null hypothesis is that mean birthweight among premature births is equal to mean birthweight among non-premature births, and the alternative hypothesis is that these means are not equal. Based on a two-sample t-test assuming equal variances, there is strong evidence of a difference in mean birthweight between premature and non-premature births (p < 0.001).}
+
+e. What do you notice about your results from parts (d) and (e)? Do they agree? (1 point)
+
+\textcolor{blue}{The results (estimated difference in means, confidence interval, and p-value) are all the same! A two-sample t-test assuming equal variances is exactly equivalent to linear regression with a binary predictor.}
+
+\newpage
+
+## 2. Simple linear regression with quantitative predictor
+
+On Homework 1, you plotted pre-pregnancy weight vs. weight gain during pregnancy, and qualitatively assessed whether or not there was a linear relationship. In this problem, you will study this association using statistical inference. 
+
+a. Write a statistical question that will allow us to examine the association between pre-pregnancy weight and weight gain during pregnancy using linear regression. What is the parameter of interest? (2 points)
+
+\textcolor{blue}{Statistical question: Is there a difference in weight gain during pregnancy between groups of birth parents differing in pre-pregnancy weight? Parameter: Population linear regression slope (difference in mean weight gain comparing groups of birth parents differing by 1 pound in pre-pregnancy weight).}
+
+b. Perform a linear regression analysis to answer the statistical question from part (a). Be sure to include a statistic with appropriate uncertainty quantification, as well as a hypothesis test. Be sure to state the null and alternative hypotheses. (2 points)  
+
+```{r 2b}
+mod <- lm(wgain ~ wpre, data = births)
+summary(mod)
+confint(mod)
+```
+
+\textcolor{blue}{The estimated difference in mean weight gain comparing groups of birth parents differing by 1 pound in pre-pregnancy weight is 0.05 pounds (95\% CI 0.04 - 0.06), with those who weighed more pre-pregnancy having lower weight gain on average. This estimated difference would not be unusual if the true difference were between 0.04 and 0.06 pounds. These data provide strong evidence of a difference in mean weight gain comparing birth parents with different pre-pregnancy weights (p < 0.001) based on a test of the null hypothesis that the regression slope is 0, versus an alternative that the regression slope is not equal to 0.}
+
+c. What is the interpretation of the intercept of the model you fit in part (b)? Does this intercept make scientific sense? (1 point)
+
+\textcolor{blue}{The intercept (37.4 pounds) gives the estimated average weight gain among birth parents who weighed 0 pounds pre-pregnancy. This intercept does not make scientific sense -- it is physically impossible for someone to weigh 0 pounds.}
+
+d. Produce a scatterplot of pre-pregnancy weights vs. weight gain during pregnancy. Include your regression line from part (b) on the graph. (If you get stuck, try Google!) (2 points)
+
+```{r 2d}
+births %>% ggplot(aes(x = wpre, y = wgain)) + 
+  geom_point() + 
+  geom_abline(slope = -0.05, intercept = 39.7, color = "blue") + 
+  theme_bw() + 
+  xlab("Weight pre-pregnancy (lbs)") + 
+  ylab("Weight gain (lbs)") + 
+  ggtitle("Scatterplot of pre-pregnancy weight and weight gain with best fit line")
+```
+
+e. The four traditional linear regression assumptions are linearity, independence, Normality of errors, and equal variance. For each of these assumptions, assess whether or not you think the assumption is violated. If appropriate, use graphs to support your argument. (3 points)
+
+```{r 2e}
+resids <- residuals(mod)
+fittedvals <- predict(mod)
+
+# residuals vs fitted values scatterplot
+data.frame(resids = resids,
+           fittedvals = fittedvals,
+           x = births$wpre) %>%
+  ggplot(aes(x = fittedvals, y = resids)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, col = "red") + 
+  xlab("Fitted values") + 
+  ylab("Residuals") + 
+  ggtitle("Scatterplot of residuals vs. fitted values") + 
+  theme_bw()
+
+# histogram of residuals
+data.frame(resids = resids) %>% 
+  ggplot(aes(x = resids)) +
+  geom_histogram(bins = 15, col = "black") + 
+  xlab("Residuals") + 
+  ggtitle("Histogram of residuals") + 
+  theme_bw()
+```
+
+\textcolor{blue}{Based on the scatterplot of residuals vs. fitted values, there does not seem to be a strong pattern, and the points are largely in a cloud around the $y = 0$ line. This does not suggest strong violations of linearity. Furthermore, the scatter of the points around the line does not change substantially with the fitted values, so there is no obvious sign of violation of the equal variance assumption.}
+
+\textcolor{blue}{The histogram of residuals shows a clear right skew, so the residuals do not seem to follow a Normal distribution perfectly. However, the overall shape appears roughly Normal.}
+
+\textcolor{blue}{Based on the way the data were collected, independence seems to be a reasonable assumption. As far as we know, each birth parent appears in the dataset only one time; if they were sampled multiple times that would be a major cause for concern.} 
+
+f. Based on the results of part (e), do you have major concerns about your linear regression analysis and its appropriateness for answering the scientific question? Write a few sentences explaining your rationale. (2 points)
+
+\textcolor{blue}{Based on our regression diagnostics, I do not have major concerns about our linear regression analysis. The (fairly mild) Normality violation is not a concern given our large sample size -- the Central Limit Theorem guarantees Normality of the regression coefficients in such a large sample. The other three assumptions are important for inference, but none seem to be violated.}
