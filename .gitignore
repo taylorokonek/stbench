@@ -25,3 +25,4 @@ inst/include/.DS_Store
 src/stbench.so
 src/stbench.so
 *.so
+src/stbench.so
