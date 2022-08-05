@@ -31,7 +31,7 @@
 #' sum to one at each time point, and be in order arrange(region)
 #' @param Q_struct_space An ICAR precision matrix. Should be unscaled, as scaling will happen 
 #' internally.
-#' @param alpha_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
+#' @param intercept_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
 #' to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
 #' a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only 
 #' an option for the area-level, unbenchmarked model.
@@ -65,7 +65,7 @@ fit_normal <- function(df,
                        natl_sd = NULL,
                        pop_weights = NULL,
                        Q_struct_space = NULL, 
-                       alpha_pri = c(0, 31.62278),
+                       intercept_pri = c(0, 31.62278),
                        nsamp = 1000,
                        benched = "unbenched",
                        expit_outcome = NULL) {
@@ -74,6 +74,15 @@ fit_normal <- function(df,
   binom_df <- df
   
   # error handling
+  
+  # alpha_pri must be length(2) and numeric
+  alpha_pri <- intercept_pri
+  if (!is.numeric(alpha_pri)) {
+    stop("prior for intercept must be numeric")
+  }
+  if (length(alpha_pri) != 2) {
+    stop("prior for intercept must be length(2), in form (mean, sd)")
+  }
   
   # region, time, age, age_group, cluster, y, Ntrials must all be in binom_df
   if (!(region %in% colnames(binom_df))) {
