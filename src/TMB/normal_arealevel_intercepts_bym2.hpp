@@ -69,6 +69,7 @@ Type normal_arealevel_intercepts_bym2(objective_function<Type>* obj)
   // DATA_VECTOR( spacetime_tau_pri ); 
   // DATA_VECTOR( d_pri );          // overdispersion parameter if we're fitting a betabinomial model
   // DATA_VECTOR( beta_pri ); //specifying u and prec for beta_i                     with beta_i~Norm(u,prec)
+  DATA_VECTOR( alpha_pri ); // prior for intercept alpha, with alpha ~ N(alpha_pri[0], alpha_pri[1]) (mean, sd)
 
   // Fixed effects & hyperpars
   PARAMETER( alpha );           // Intercept
@@ -231,7 +232,7 @@ Type normal_arealevel_intercepts_bym2(objective_function<Type>* obj)
 
 
   // prior for intercepts
-  jnll_comp[1] -= dnorm(alpha, Type(0.0), Type(31.62278), true); // corresponds to a precision of 0.001, as in INLA default
+  jnll_comp[1] -= dnorm(alpha, alpha_pri(0), alpha_pri(1), true); // corresponds to a precision of 0.001, as in INLA default
 
   // hyperpriors for bym2 in space
   jnll_comp[1] -= dlogitbeta(space_logit_phi, Type(0.5), Type(0.5), true);

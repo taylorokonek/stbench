@@ -15,6 +15,7 @@ fit_normal(
   natl_sd = NULL,
   pop_weights = NULL,
   Q_struct_space = NULL,
+  alpha_pri = c(0, 31.62278),
   nsamp = 1000,
   benched = "unbenched",
   expit_outcome = NULL
@@ -52,6 +53,11 @@ sum to one at each time point, and be in order arrange(region)}
 
 \item{Q_struct_space}{An ICAR precision matrix. Should be unscaled, as scaling will happen
 internally.}
+
+\item{alpha_pri}{Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
+to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
+a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only
+an option for the area-level, unbenchmarked model.}
 
 \item{nsamp}{Number of posterior samples to take from joint posterior. Defaults to 1000}
 

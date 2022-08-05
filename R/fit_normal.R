@@ -31,6 +31,10 @@
 #' sum to one at each time point, and be in order arrange(region)
 #' @param Q_struct_space An ICAR precision matrix. Should be unscaled, as scaling will happen 
 #' internally.
+#' @param alpha_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
+#' to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
+#' a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only 
+#' an option for the area-level, unbenchmarked model.
 #' @param nsamp Number of posterior samples to take from joint posterior. Defaults to 1000
 #' @param benched A string, either \code{"benched"}, \code{"unbenched"}, or \code{"both"}, determining
 #' whether to fit a benchmarked model, and unbenchmarked model, or both. Defaults to \code{"unbenched"}.
@@ -61,6 +65,7 @@ fit_normal <- function(df,
                        natl_sd = NULL,
                        pop_weights = NULL,
                        Q_struct_space = NULL, 
+                       alpha_pri = c(0, 31.62278),
                        nsamp = 1000,
                        benched = "unbenched",
                        expit_outcome = NULL) {
@@ -161,7 +166,7 @@ fit_normal <- function(df,
                                                         expit_outcome = expit_outcome,
                                                         nsamp = nsamp)
     } else {
-      message("Unenched Normal model")
+      message("Unbenched Normal model")
       unbenched_res <- tmb_normal_intercepts_bym2(binom_df = binom_df,
                                                   cluster = cluster,
                                                   y = y,
@@ -197,6 +202,7 @@ fit_normal <- function(df,
                                                             SE_i = SE_i,
                                                             hiv_adj = hiv_adj,
                                                             Q_struct_space = Q_struct_space,
+                                                            alpha_pri = alpha_pri,
                                                             nsamp = nsamp)
     } else if (benched == "benched") {
       message("Benched Normal model")
@@ -219,6 +225,7 @@ fit_normal <- function(df,
                                                             SE_i = SE_i,
                                                             hiv_adj = hiv_adj,
                                                             Q_struct_space = Q_struct_space,
+                                                            alpha_pri = alpha_pri,
                                                             nsamp = nsamp)
       
       message("Benched Normal model")
