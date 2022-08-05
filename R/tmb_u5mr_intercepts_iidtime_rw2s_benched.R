@@ -133,7 +133,7 @@ tmb_u5mr_intercepts_iidtime_rw2s_benched <- function(binom_df,
                         random     = t.rand,
                         map        = ADmap,
                         hessian    = TRUE,
-                        DLL        = "simultBench_TMBExports")
+                        DLL        = "stbench_TMBExports")
   
   message("Model fitting...")
   

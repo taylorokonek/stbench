@@ -161,7 +161,7 @@ tmb_u5mr_betabinom_intercepts_iidtime_bym2_slopes_rw2s_typeIV <- function(binom_
                         random     = t.rand,
                         map        = ADmap,
                         hessian    = TRUE,
-                        DLL        = "simultBench_TMBExports")
+                        DLL        = "stbench_TMBExports")
   
   message("Model fitting...")
   

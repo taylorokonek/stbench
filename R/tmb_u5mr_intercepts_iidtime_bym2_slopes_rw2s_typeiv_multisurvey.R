@@ -186,7 +186,7 @@ tmb_u5mr_intercepts_iidtime_bym2_slopes_rw2s_typeIV_multisurvey <- function(bino
                         random     = t.rand,
                         map        = ADmap,
                         hessian    = TRUE,
-                        DLL        = "simultBench_TMBExports")
+                        DLL        = "stbench_TMBExports")
   
   message("Model fitting...")
   
