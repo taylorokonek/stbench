@@ -30,6 +30,10 @@
 #' sum to one at each time point, and be in order arrange(region)
 #' @param Q_struct_space An ICAR precision matrix. Should be unscaled, as scaling will happen 
 #' internally.
+#' @param intercept_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
+#' to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
+#' a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only 
+#' an option for unbenchmarked models.
 #' @param nsamp Number of posterior samples to take from joint posterior. Defaults to 1000
 #' @param benched A string, either \code{"benched"}, \code{"unbenched"}, or \code{"both"}, determining
 #' whether to fit a benchmarked model, and unbenchmarked model, or both. Defaults to \code{"unbenched"}.
@@ -58,10 +62,20 @@ fit_binary <- function(binom_df,
                        natl_sd = NULL,
                        pop_weights = NULL,
                        Q_struct_space = NULL, 
+                       intercept_pri = c(0, 31.62278),
                        nsamp = 1000,
                        benched = "unbenched",
                        family = "binomial") {
   # error handling
+  
+  # alpha_pri must be length(2) and numeric
+  alpha_pri <- intercept_pri
+  if (!is.numeric(alpha_pri)) {
+    stop("prior for intercept must be numeric")
+  }
+  if (length(alpha_pri) != 2) {
+    stop("prior for intercept must be length(2), in form (mean, sd)")
+  }
   
   # betabinomial currently unsupported
   if (!(family %in% c("binomial", "betabinomial"))) {
@@ -112,50 +126,52 @@ fit_binary <- function(binom_df,
   if (family == "binomial") {
     if (benched == "unbenched") {
       message("Unbenched Binomial model")
-      unbenched_res <- tmb_binary_intercepts_bym2(binom_df,
-                                                  cluster,
-                                                  y,
-                                                  Ntrials,
-                                                  region,
-                                                  hiv_adj,
-                                                  Q_struct_space,
-                                                  nsamp)
+      unbenched_res <- tmb_binary_intercepts_bym2(binom_df = binom_df,
+                                                  cluster = cluster,
+                                                  y = y,
+                                                  Ntrials = Ntrials,
+                                                  region = region,
+                                                  hiv_adj = hiv_adj,
+                                                  Q_struct_space = Q_struct_space,
+                                                  alpha_pri = alpha_pri,
+                                                  nsamp = nsamp)
     } else if (benched == "benched") {
       message("Benched Binomial model")
-      benched_res <- tmb_binary_intercepts_bym2_benched(binom_df,
-                                                        cluster,
-                                                        y,
-                                                        Ntrials,
-                                                        region,
-                                                        hiv_adj,
-                                                        natl,
-                                                        natl_sd,
-                                                        pop_weights,
-                                                        Q_struct_space,
-                                                        nsamp)
+      benched_res <- tmb_binary_intercepts_bym2_benched(binom_df = binom_df,
+                                                        cluster = cluster,
+                                                        y = y,
+                                                        Ntrials = Ntrials,
+                                                        region = region,
+                                                        hiv_adj = hiv_adj,
+                                                        natl = natl,
+                                                        natl_sd = natl_sd,
+                                                        pop_weights = pop_weights,
+                                                        Q_struct_space = Q_struct_space,
+                                                        nsamp = nsamp)
     } else {
       message("Unenched Binomial model")
-      unbenched_res <- tmb_binary_intercepts_bym2(binom_df,
-                                                  cluster,
-                                                  y,
-                                                  Ntrials,
-                                                  region,
-                                                  hiv_adj,
-                                                  Q_struct_space,
-                                                  nsamp)
+      unbenched_res <- tmb_binary_intercepts_bym2(binom_df = binom_df,
+                                                  cluster = cluster,
+                                                  y = y,
+                                                  Ntrials = Ntrials,
+                                                  region = region,
+                                                  hiv_adj = hiv_adj,
+                                                  Q_struct_space = Q_struct_space,
+                                                  alpha_pri = alpha_pri,
+                                                  nsamp = nsamp)
       
       message("Benched Binomial model")
-      benched_res <- tmb_binary_intercepts_bym2_benched(binom_df,
-                                                        cluster,
-                                                        y,
-                                                        Ntrials,
-                                                        region,
-                                                        hiv_adj,
-                                                        natl,
-                                                        natl_sd,
-                                                        pop_weights,
-                                                        Q_struct_space,
-                                                        nsamp)
+      benched_res <- tmb_binary_intercepts_bym2_benched(binom_df = binom_df,
+                                                        cluster = cluster,
+                                                        y = y,
+                                                        Ntrials = Ntrials,
+                                                        region = region,
+                                                        hiv_adj = hiv_adj,
+                                                        natl = natl,
+                                                        natl_sd = natl_sd,
+                                                        pop_weights = pop_weights,
+                                                        Q_struct_space = Q_struct_space,
+                                                        nsamp = nsamp)
       
     }
   } else {
