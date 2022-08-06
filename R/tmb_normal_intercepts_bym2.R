@@ -18,6 +18,9 @@
 #' @param hiv_adj An optional log offset in time to include in the linear predictor. Defaults to 
 #' no log offset. 
 #' @param Q_struct_space An ICAR precision matrix. Should be scaled.
+#' @param alpha_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
+#' to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
+#' a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution.
 #' @param nsamp Number of posterior samples to take from joint posterior. Defaults to 1000
 #' @return A list containing: 
 #' \itemize{
@@ -37,6 +40,7 @@ tmb_normal_intercepts_bym2 <- function(binom_df,
                                        SE_i,
                                        hiv_adj = NA,
                                        Q_struct_space,
+                                       alpha_pri = c(0, 31.62278),
                                        nsamp = 1000) {
   
   N <- dim(Q_struct_space)[1]
@@ -62,6 +66,7 @@ tmb_normal_intercepts_bym2 <- function(binom_df,
                  region_id = binom_df[,region],
                  cluster_id = binom_df[,cluster],
                  Q_struc_space = Q_struct_space,
+                 alpha_pri = alpha_pri,
                  gamma_tilde = gamma_tilde,
                  risk_region_id = 1:length(unique(binom_df[,region])))
   

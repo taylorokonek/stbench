@@ -34,7 +34,7 @@
 #' @param intercept_pri Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
 #' to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
 #' a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only 
-#' an option for the area-level, unbenchmarked model.
+#' an option for unbenchmarked models.
 #' @param nsamp Number of posterior samples to take from joint posterior. Defaults to 1000
 #' @param benched A string, either \code{"benched"}, \code{"unbenched"}, or \code{"both"}, determining
 #' whether to fit a benchmarked model, and unbenchmarked model, or both. Defaults to \code{"unbenched"}.
@@ -159,6 +159,7 @@ fit_normal <- function(df,
                                                   SE_i = SE_i,
                                                   hiv_adj = hiv_adj,
                                                   Q_struct_space = Q_struct_space,
+                                                  alpha_pri = alpha_pri,
                                                   nsamp = nsamp)
     } else if (benched == "benched") {
       message("Benched Normal model")
@@ -183,6 +184,7 @@ fit_normal <- function(df,
                                                   SE_i = SE_i,
                                                   hiv_adj = hiv_adj,
                                                   Q_struct_space = Q_struct_space,
+                                                  alpha_pri = alpha_pri,
                                                   nsamp = nsamp)
       
       message("Benched Normal model")

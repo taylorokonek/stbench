@@ -57,7 +57,7 @@ internally.}
 \item{intercept_pri}{Prior specification for the intercept. Defaults to c(0, 31.62278), corresponding
 to the default prior for the intercept in INLA, with mean 0 and precision 0.001. Must be
 a vector of length 2, with specificaiton c(mean, sd) for a Normal distribution. Currently only
-an option for the area-level, unbenchmarked model.}
+an option for unbenchmarked models.}
 
 \item{nsamp}{Number of posterior samples to take from joint posterior. Defaults to 1000}
 
