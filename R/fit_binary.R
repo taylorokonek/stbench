@@ -66,6 +66,14 @@ fit_binary <- function(binom_df,
                        nsamp = 1000,
                        benched = "unbenched",
                        family = "binomial") {
+  
+  # handle tibbles
+  
+  if (is_tibble(binom_df)) {
+    message("Converting tibble to dataframe")
+    binom_df <- as.data.frame(binom_df)
+  }
+  
   # error handling
   
   # alpha_pri must be length(2) and numeric
