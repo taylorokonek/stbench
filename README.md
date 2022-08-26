@@ -39,6 +39,8 @@ Current functions available that apply benchmarking methods to samples from a di
 
 * `benchmark_bayesest`: Constrained Bayes estimate approach to benchmarking, described in [Datta et al., 2011](https://doi.org/10.1007/s11749-010-0218-y)
 
+* `benchmark_mh`: Fully Bayesian benchmarking via a Metropolis-Hastings algorithm.
+
 ## Installation
 
 The current development version can be installed using `devtools::install_github()`:
