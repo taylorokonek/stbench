@@ -17,15 +17,17 @@ A_full <- function(old_thetas, new_thetas, old_betas, new_betas,
                    z, intercept_means, var_z, var_plus) {
   num <- 1
   denom <- 1
-  for (i in 1:length(z)) {
-    num <- num * dnorm(z[i], new_thetas[i], sqrt(var_z[i]))
-    denom <- denom * dnorm(z[i], old_thetas[i], sqrt(var_z[i]))
+  for (i in 1:length(old_thetas)) {
+    num <- num + dnorm(z[i], new_thetas[i], sqrt(var_z[i]), 
+                       log = TRUE)
+    denom <- denom + dnorm(z[i], old_thetas[i], sqrt(var_z[i]), 
+                           log = TRUE)
   }
   for (i in 1:length(old_betas)) {
-    num <- num * dnorm(old_betas[i], intercept_means[i], 
-                       sqrt(var_plus[i]))
-    denom <- denom * dnorm(new_betas[i], intercept_means[i], 
-                           sqrt(var_plus[i]))
+    num <- num + dnorm(old_betas[i], intercept_means[i], 
+                       sqrt(var_plus[i]), log = TRUE)
+    denom <- denom + dnorm(new_betas[i], intercept_means[i], 
+                           sqrt(var_plus[i]), log = TRUE)
   }
-  return(min(1, num/denom))
+  return(min(1, exp(num - denom)))
 }
