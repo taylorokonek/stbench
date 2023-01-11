@@ -254,7 +254,7 @@ Type normal_arealevel_intercepts_bym2(objective_function<Type>* obj)
 
 
   // Likelihood contribution from each datapoint ic
-  for (int i = 0; i < N; i++){
+  for (int i = 0; i < SE_i.size(); i++){
 
     // figure out which region and time this cluster is in
     int idx_space = region_id(i) - 1; // subtract one because c++ uses 0-indexing
@@ -264,7 +264,7 @@ Type normal_arealevel_intercepts_bym2(objective_function<Type>* obj)
     risk_i(idx_space) = alpha + total_latent_i(idx_space) + log(hiv_adj(0));
 
     // and add data contribution to jnll
-    jnll_comp[2] -= dnorm(y_ic(i), risk_i(idx_space), SE_i(idx_space), true);
+    jnll_comp[2] -= dnorm(y_ic(i), risk_i(idx_space), SE_i(i), true);
 
   } 
 
