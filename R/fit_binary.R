@@ -105,10 +105,10 @@ fit_binary <- function(binom_df,
   }
   
   # region, time, age, age_group, cluster must all be numeric and start from 1
-  if (!(is.numeric(binom_df[,region]) & (min(binom_df[,region]) == 1))) {
+  if (!(is.numeric(binom_df[,region]))) {
     stop("region must be numeric and start from 1")
   }
-  if (!(is.numeric(binom_df[,cluster]) & (min(binom_df[,cluster]) == 1))) {
+  if (!(is.numeric(binom_df[,cluster]))) {
     stop("cluster must be numeric and start from 1")
   }
   if (!(is.numeric(binom_df[,y]))) {
